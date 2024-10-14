@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Variables para la ruta y nombres de los archivos
+PROJECT_DIR="/home/goldenhooded/Projects/Clipp"
+SOURCE_FILE_NAME="clipp.py"
+AUTOCOMPLETE_FILE_NAME="clipp-autocomplete.sh"
+DEST_DIR="/usr/local/bin"
+DEST_FILE_NAME="clipp"
+
+# Rutas completas de los archivos
+SOURCE_FILE="$PROJECT_DIR/$SOURCE_FILE_NAME"
+AUTOCOMPLETE_FILE="$PROJECT_DIR/$AUTOCOMPLETE_FILE_NAME"
+
+# Mover el archivo, renombrarlo y copiarlo al destino
+if [ -f "$SOURCE_FILE" ]; then
+    cp "$SOURCE_FILE" "$DEST_DIR/$DEST_FILE_NAME"
+    chmod +x "$DEST_DIR/$DEST_FILE_NAME"
+    echo "El archivo $SOURCE_FILE ha sido copiado a $DEST_DIR/$DEST_FILE_NAME y está listo para ejecutarse."
+else
+    echo "El archivo $SOURCE_FILE no existe. Verifica la ruta."
+fi
+
+# Configurar el autocompletado
+if [ -f "$AUTOCOMPLETE_FILE" ]; then
+    # Fuente el script de autocompletado
+    source "$AUTOCOMPLETE_FILE"
+    echo "El script de autocompletado se ha cargado."
+    
+    # Añadir el autocompletado al archivo .bashrc para persistencia
+    if ! grep -q "$AUTOCOMPLETE_FILE" ~/.bashrc; then
+        echo "source $AUTOCOMPLETE_FILE" >> ~/.bashrc
+        echo "El script de autocompletado se ha añadido a ~/.bashrc para que sea persistente."
+    fi
+else
+    echo "El archivo $AUTOCOMPLETE_FILE no existe. Verifica la ruta."
+fi
