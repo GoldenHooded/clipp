@@ -36,7 +36,7 @@ def get_terminal_width():
 
 # Función para autocompletar comandos
 def completer(text, state):
-    commands = ['add', 'list', 'ls', 'ex', 'remove', 'clear']
+    commands = ['add', 'list', 'ls', 'ex', 'execute', 'remove', 'rm', 'clear']
     matches = [cmd for cmd in commands if cmd.startswith(text)]
     return matches[state] if state < len(matches) else None
 
@@ -60,12 +60,13 @@ list_parser = subparsers.add_parser("list", aliases=["ls"])
 list_parser.add_argument("-d", "--description", action="store_true", help="Muestra las descripciones")
 list_parser.add_argument("-n", "--index", action="store_true", help="Muestra los índices")
 
-# Subparser para el comando 'ex'
-ex_parser = subparsers.add_parser("ex")
+# Subparser para el comando 'ex' o 'execute'
+ex_parser = subparsers.add_parser("ex", aliases=["execute"])
 ex_parser.add_argument("index", type=int, help="Índice del comando a ejecutar")
+ex_parser.add_argument("extra", nargs="?", help="Argumento adicional para añadir al comando (opcional)")
 
-# Subparser para el comando 'remove'
-remove_parser = subparsers.add_parser("remove")
+# Subparser para el comando 'remove' o 'rm'
+remove_parser = subparsers.add_parser("remove", aliases=["rm"])
 remove_parser.add_argument("index", type=int, help="Índice del comando a remover")
 
 # Subparser para el comando 'clear'
@@ -124,14 +125,16 @@ elif args.command in ["list", "ls"]:
                 print()
 
 # Lógica para ejecutar un comando por índice
-elif args.command == "ex":
+elif args.command in ["ex", "execute"]:
     index = args.index
     command_to_execute = strings[index]["command"]
+    if args.extra:
+        command_to_execute += " " + args.extra
     print(f"Ejecutando: {command_to_execute}")
     os.system(command_to_execute)
 
 # Lógica para remover un comando por índice
-elif args.command == "remove":
+elif args.command in ["remove", "rm"]:
     index = args.index
     removed = strings.pop(index)
     save_data()
